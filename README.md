@@ -8,6 +8,6 @@
 
 ---
 
-To do: Wazuh, TheHive, wn10, sysmon
+To do: Wazuh, TheHive, wn10, sysmon 
 
 ---
