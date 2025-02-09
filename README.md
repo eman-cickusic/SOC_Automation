@@ -431,6 +431,36 @@ stateDiagram-v2
     UpdateMetrics --> [*]
 ```
 
+## 📊 SOC Metrics Dashboard
+
+### Alert Distribution
+```mermaid
+pie title Alert Distribution by Severity
+    "High" : 15
+    "Medium" : 35
+    "Low" : 50
+```
+
+### Response Time Metrics
+```mermaid
+graph LR
+    subgraph Detection Times
+        A[Average Detection: 2.5 min]
+        B[Average Response: 15 min]
+        C[Average Resolution: 45 min]
+    end
+```
+
+## 🧪 Integration Testing Matrix
+
+| Component | Test Case | Expected Result | Validation Method |
+|-----------|-----------|-----------------|-------------------|
+| Sysmon | Process Creation | Event ID 1 Generated | Event Viewer |
+| Wazuh Agent | Event Forwarding | Events in Wazuh Manager | agent_control -i |
+| Custom Rules | Mimikatz Detection | Alert Level 12 | ossec-logtest |
+| Shuffle | Workflow Trigger | Case Created | TheHive API Check |
+| Email | Alert Notification | Email Received | Manual Verification |
+
 ## 🔍 Troubleshooting Guide
 
 ### Common Issues and Solutions
