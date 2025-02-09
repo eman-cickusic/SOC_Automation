@@ -9,15 +9,47 @@ This project demonstrates a complete Security Operations Center (SOC) automation
 - Showcase integration between multiple security tools
 - Generate and detect security events using common attack tools
 
-## 🏗️ Architecture
+## 🏗️ Detailed Architecture
+```mermaid
+flowchart TD
+    subgraph Windows["Windows 10 Endpoint"]
+        A[Sysmon] -->|Events| B[Wazuh Agent]
+        M[Mimikatz Activity] -.->|Generates| A
+    end
+    
+    subgraph Wazuh["Wazuh Server"]
+        C[Wazuh Manager] -->|Processes| D[Custom Rules]
+        D -->|Matches| E[Alert Generation]
+        B -->|Forwards Events| C
+    end
+    
+    subgraph SOAR["Shuffle SOAR"]
+        E -->|Triggers| F[Workflow Engine]
+        F -->|Executes| G[Playbooks]
+    end
+    
+    subgraph Response["Response Systems"]
+        G -->|Creates| H[TheHive Case]
+        G -->|Sends| I[Email Alert]
+        H -->|Assigns to| J[SOC Analyst]
+    end
+```
+
+### Network Architecture
 ```mermaid
 graph TD
-    A[Windows 10 Endpoint] -->|Sysmon Events| B[Wazuh Agent]
-    B -->|Alert Data| C[Wazuh Manager]
-    C -->|Triggers| D[Shuffle SOAR]
-    D -->|Creates Case| E[TheHive]
-    D -->|Sends Notification| F[SquareX Email]
-    E -->|Assigns to| G[SOC Analyst]
+    subgraph Internal Network
+        A[Windows 10<br>192.168.1.10] -->|TCP/1514| B[Wazuh Server<br>192.168.1.20]
+        B -->|TCP/9000| C[TheHive<br>192.168.1.30]
+        B -->|TCP/3001| D[Shuffle SOAR<br>192.168.1.40]
+    end
+    
+    subgraph DMZ
+        E[SquareX Email Gateway<br>192.168.2.10]
+    end
+    
+    D -->|TCP/587| E
+    E -->|TCP/25| F[External Email]
 ```
 
 ## 🛠️ System Requirements
