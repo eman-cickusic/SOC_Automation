@@ -461,6 +461,38 @@ graph LR
 | Shuffle | Workflow Trigger | Case Created | TheHive API Check |
 | Email | Alert Notification | Email Received | Manual Verification |
 
+## 🧪 Comprehensive Testing & Validation Procedures
+
+### 1. Component-Level Testing
+
+#### 1.1 Sysmon Testing Matrix
+```mermaid
+flowchart TD
+    A[Sysmon Tests] --> B[Process Creation]
+    A --> C[Network Connection]
+    A --> D[File Creation]
+    A --> E[Registry Modification]
+    
+    B --> B1[Test Mimikatz Detection]
+    B --> B2[Test PowerShell Encoding]
+    B --> B3[Test LSASS Access]
+    
+    C --> C1[Test Port Monitoring]
+    C --> C2[Test DNS Queries]
+    
+    D --> D1[Test File Integrity]
+    D --> D2[Test Executable Creation]
+    
+    E --> E1[Test Registry Keys]
+    E --> E2[Test WDigest Changes]
+```
+
+| Test Case | Command/Action | Expected Result | Validation Command |
+|-----------|---------------|-----------------|-------------------|
+| Process Creation | `Start-Process notepad.exe` | Event ID 1 | `Get-WinEvent -LogName Microsoft-Windows-Sysmon/Operational \| Where-Object { $_.ID -eq 1 }` |
+| PowerShell Encoding | `powershell -enc VABlAHMAdAA=` | Event ID 1 with encoded command | `Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Sysmon/Operational';ID=1} \| Where-Object { $_.Message -like '*-enc*' }` |
+| LSASS Access | Use Process Explorer to access LSASS | Event ID 10 | `Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Sysmon/Operational';ID=10} \| Where-Object { $_.Message -like '*lsass.exe*' }` |
+
 ## 🔍 Troubleshooting Guide
 
 ### Common Issues and Solutions
