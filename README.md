@@ -252,6 +252,35 @@ Edit `/var/ossec/etc/ossec.conf`:
 </ossec_config>
 ```
 
+### 2.3 Wazuh Agent Group Configuration
+Create `/var/ossec/etc/shared/windows/agent.conf`:
+```xml
+<agent_config>
+  <localfile>
+    <location>Microsoft-Windows-Sysmon/Operational</location>
+    <log_format>eventchannel</log_format>
+    <query>Event/System[EventID != 3 and EventID != 5]</query>
+  </localfile>
+  
+  <syscheck>
+    <directories check_all="yes" realtime="yes">C:\Windows\System32\drivers</directories>
+    <directories check_all="yes" realtime="yes">C:\Windows\System32\Config</directories>
+    <directories check_all="yes" realtime="yes">C:\Program Files</directories>
+    <ignore>C:\Program Files (x86)\ossec-agent</ignore>
+    
+    <windows_registry>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run</windows_registry>
+    <windows_registry>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\RunOnce</windows_registry>
+    <registry_ignore>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Installer\UserData</registry_ignore>
+  </syscheck>
+  
+  <rootcheck>
+    <system_audit>./shared/win_audit_rcl.txt</system_audit>
+    <windows_apps>./shared/win_applications_rcl.txt</windows_apps>
+    <windows_malware>./shared/win_malware_rcl.txt</windows_malware>
+  </rootcheck>
+</agent_config>
+```
+
 ### 3. TheHive Advanced Setup
 
 #### 3.1 TheHive Configuration
