@@ -38,7 +38,8 @@ flowchart TD
     end
 ```
 
-### Network Architecture
+### 💻 Network Architecture
+
 ```mermaid
 graph TD
     subgraph Internal Network
@@ -80,6 +81,7 @@ graph TD
 ### 1. Windows 10 Endpoint Configuration
 
 #### 1.1 Sysmon Installation
+
 ```powershell
 # Download Sysmon and SwiftOnSecurity config
 $sysmonUrl = "https://download.sysinternals.com/files/Sysmon.zip"
@@ -103,6 +105,7 @@ Get-WinEvent -LogName "Microsoft-Windows-Sysmon/Operational" -MaxEvents 1
 ```
 
 #### 1.2 Wazuh Agent Configuration
+
 ```powershell
 # Download and install Wazuh agent
 $wazuhAgentUrl = "https://packages.wazuh.com/4.x/windows/wazuh-agent-4.4.0-1.msi"
@@ -141,6 +144,7 @@ Restart-Service -Name "Wazuh"
 ### 2. Wazuh Server Advanced Configuration
 
 #### 2.1 Custom Detection Rules
+
 Create `/var/ossec/etc/rules/local_rules.xml`:
 ```xml
 <!-- Mimikatz Detection Rules -->
@@ -179,6 +183,7 @@ Create `/var/ossec/etc/rules/local_rules.xml`:
 ```
 
 #### 2.2 Wazuh Manager Configuration
+
 Edit `/var/ossec/etc/ossec.conf`:
 ```xml
 <ossec_config>
@@ -212,6 +217,7 @@ Edit `/var/ossec/etc/ossec.conf`:
 ### 3. TheHive Advanced Setup
 
 #### 3.1 TheHive Configuration
+
 Create `/etc/thehive/application.conf`:
 ```conf
 # Secret key
@@ -261,6 +267,7 @@ play.filters.cors {
 ### 4. Shuffle Integration Details
 
 #### 4.1 Wazuh to Shuffle Webhook Configuration
+
 Create a new Wazuh integration in `/var/ossec/etc/integrations/custom-shuffle`:
 ```bash
 #!/bin/bash
@@ -279,6 +286,7 @@ curl -s -X POST -H "Content-Type: application/json" -d "$alert_json" "$WEBHOOK_U
 ```
 
 #### 4.2 Shuffle Workflow Configuration
+
 ```yaml
 triggers:
   - type: webhook
@@ -318,6 +326,7 @@ actions:
 
 #### Windows Agent Issues
 Agent not connecting:
+
 ```powershell
 # Check agent status
 C:\Program Files (x86)\ossec-agent\wazuh-agent.exe -t
@@ -331,6 +340,7 @@ New-NetFirewallRule -DisplayName "Wazuh Agent" -Direction Outbound -LocalPort 15
 
 #### Wazuh Server Issues
 Rules not triggering:
+
 ```bash
 # Test rule matching
 /var/ossec/bin/ossec-logtest -v
@@ -344,6 +354,7 @@ echo "logtest.debug=2" >> /var/ossec/etc/internal_options.conf
 
 #### TheHive Issues
 Service won't start:
+
 ```bash
 # Check logs
 journalctl -u thehive -f
@@ -357,6 +368,7 @@ chown -R thehive:thehive /opt/thp/thehive/files
 
 #### Shuffle Issues
 Workflow not executing:
+
 ```bash
 # Check Docker containers
 docker ps | grep shuffle
@@ -371,6 +383,7 @@ curl -X POST http://shuffle-ip:3001/api/v1/hooks/webhook_id -d '{"test": "data"}
 ## 📈 Performance Monitoring
 
 ### System Health Checks
+
 ```bash
 # Wazuh Manager Stats
 /var/ossec/bin/agent_control -s
@@ -385,6 +398,7 @@ curl -X GET "localhost:9200/_cat/indices?v"
 ## 🔄 Backup Procedures
 
 ### Wazuh Backup
+
 ```bash
 # Stop Wazuh
 systemctl stop wazuh-manager
@@ -397,6 +411,7 @@ systemctl start wazuh-manager
 ```
 
 ### TheHive Backup
+
 ```bash
 # Stop TheHive
 systemctl stop thehive
@@ -411,6 +426,7 @@ systemctl start thehive
 ## 📊 Metrics & KPIs
 
 ### Security Metrics Dashboard
+
 ```mermaid
 graph LR
     A[Alert Volume] --> B[MTTD]
@@ -420,6 +436,7 @@ graph LR
 ```
 
 ## 🎓 Advanced Learning Resources
+
 - [Wazuh Documentation](https://documentation.wazuh.com)
 - [TheHive Project Documentation](https://docs.thehive-project.org)
 - [Shuffle Documentation](https://shuffler.io/docs)
