@@ -405,6 +405,32 @@ actions:
         MITRE ATT&CK: {{trigger.rule.mitre.id}}
 ```
 
+### 4.3 Shuffle Advanced Workflow
+```mermaid
+stateDiagram-v2
+    [*] --> ReceiveAlert
+    ReceiveAlert --> ValidateAlert
+    ValidateAlert --> Enrichment
+    Enrichment --> SeverityCheck
+    
+    SeverityCheck --> HighSeverity: Level >= 12
+    SeverityCheck --> MediumSeverity: Level >= 8
+    SeverityCheck --> LowSeverity: Level < 8
+    
+    HighSeverity --> CreateTheHiveCase
+    HighSeverity --> SendEmail
+    
+    MediumSeverity --> CreateTheHiveCase
+    
+    LowSeverity --> LogAlert
+    
+    CreateTheHiveCase --> UpdateMetrics
+    SendEmail --> UpdateMetrics
+    LogAlert --> UpdateMetrics
+    
+    UpdateMetrics --> [*]
+```
+
 ## 🔍 Troubleshooting Guide
 
 ### Common Issues and Solutions
