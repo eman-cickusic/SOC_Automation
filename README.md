@@ -451,16 +451,6 @@ graph LR
     end
 ```
 
-## 🧪 Integration Testing Matrix
-
-| Component | Test Case | Expected Result | Validation Method |
-|-----------|-----------|-----------------|-------------------|
-| Sysmon | Process Creation | Event ID 1 Generated | Event Viewer |
-| Wazuh Agent | Event Forwarding | Events in Wazuh Manager | agent_control -i |
-| Custom Rules | Mimikatz Detection | Alert Level 12 | ossec-logtest |
-| Shuffle | Workflow Trigger | Case Created | TheHive API Check |
-| Email | Alert Notification | Email Received | Manual Verification |
-
 ## 🧪 Comprehensive Testing & Validation Procedures
 
 ### 1. Component-Level Testing
