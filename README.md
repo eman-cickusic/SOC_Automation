@@ -282,7 +282,7 @@ actions:
 ### Common Issues and Solutions
 
 #### Windows Agent Issues
-1. Agent not connecting:
+Agent not connecting:
 ```powershell
 # Check agent status
 C:\Program Files (x86)\ossec-agent\wazuh-agent.exe -t
@@ -295,7 +295,7 @@ New-NetFirewallRule -DisplayName "Wazuh Agent" -Direction Outbound -LocalPort 15
 ```
 
 #### Wazuh Server Issues
-1. Rules not triggering:
+Rules not triggering:
 ```bash
 # Test rule matching
 /var/ossec/bin/ossec-logtest -v
@@ -308,7 +308,7 @@ echo "logtest.debug=2" >> /var/ossec/etc/internal_options.conf
 ```
 
 #### TheHive Issues
-1. Service won't start:
+Service won't start:
 ```bash
 # Check logs
 journalctl -u thehive -f
@@ -321,7 +321,7 @@ chown -R thehive:thehive /opt/thp/thehive/files
 ```
 
 #### Shuffle Issues
-1. Workflow not executing:
+Workflow not executing:
 ```bash
 # Check Docker containers
 docker ps | grep shuffle
@@ -390,14 +390,6 @@ graph LR
 - [Shuffle Documentation](https://shuffler.io/docs)
 - [MITRE ATT&CK Framework](https://attack.mitre.org)
 
-## 👤 Author
-[Your Name]
-- LinkedIn: [Your LinkedIn Profile]
-- Email: [Your Email]
-- GitHub: [Your GitHub Profile]
-
-## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ![Picture1](https://github.com/user-attachments/assets/9a1efcb4-e0f1-41fd-bd3c-30aaa9ac98d6)
 ---
