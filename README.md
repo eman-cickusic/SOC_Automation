@@ -1,15 +1,18 @@
 # SOC Automation Lab
 
 ## 🛡️ Overview
+
 This project demonstrates a complete Security Operations Center (SOC) automation setup using open-source tools. The environment includes security monitoring, incident response, and automated alert handling capabilities through the integration of Wazuh SIEM, TheHive case management, and Shuffle SOAR platform.
 
 ## 🎯 Project Goals
+
 - Implement end-to-end security monitoring and incident response
 - Demonstrate automated alert handling and investigation
 - Showcase integration between multiple security tools
 - Generate and detect security events using common attack tools
 
-## 🏗️ Detailed Architecture
+## 🏗️ Architecture
+
 ```mermaid
 flowchart TD
     subgraph Windows["Windows 10 Endpoint"]
