@@ -493,6 +493,179 @@ flowchart TD
 | PowerShell Encoding | `powershell -enc VABlAHMAdAA=` | Event ID 1 with encoded command | `Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Sysmon/Operational';ID=1} \| Where-Object { $_.Message -like '*-enc*' }` |
 | LSASS Access | Use Process Explorer to access LSASS | Event ID 10 | `Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Sysmon/Operational';ID=10} \| Where-Object { $_.Message -like '*lsass.exe*' }` |
 
+#### 1.2 Wazuh Agent Validation
+```bash
+# 1. Agent Connection Test
+/var/ossec/bin/agent_control -i 001
+
+# 2. Configuration Test
+/var/ossec/bin/verify-agent-conf
+
+# 3. Rule Testing
+/var/ossec/bin/ossec-logtest -v -c /var/ossec/etc/ossec.conf
+
+# 4. Real-time Monitoring Test
+tail -f /var/ossec/logs/alerts/alerts.log
+```
+
+### 2. Integration Testing Scenarios
+
+#### 2.1 End-to-End Alert Testing
+```mermaid
+sequenceDiagram
+    participant W as Windows Test
+    participant WA as Wazuh Agent
+    participant WM as Wazuh Manager
+    participant S as Shuffle
+    participant TH as TheHive
+    
+    Note over W: Test Phase 1
+    W->>WA: Generate Test Event
+    WA->>WM: Forward Event
+    
+    Note over WM: Test Phase 2
+    WM->>WM: Process Rules
+    WM->>S: Generate Alert
+    
+    Note over S: Test Phase 3
+    S->>TH: Create Case
+    S->>TH: Add Observable
+```
+
+#### 2.2 Test Cases Matrix
+
+| Phase | Test Scenario | Test Steps | Expected Outcome | Validation Method |
+|-------|--------------|------------|------------------|-------------------|
+| 1 | Basic Event Flow | 1. Create test file<br>2. Modify registry key<br>3. Execute test process | Events appear in Wazuh manager | `tail -f /var/ossec/logs/archives/archives.log` |
+| 2 | Alert Generation | 1. Trigger custom rule<br>2. Check alert level<br>3. Verify MITRE mapping | Alert generated with correct metadata | `/var/ossec/bin/ossec-logtest` |
+| 3 | SOAR Integration | 1. Confirm workflow trigger<br>2. Check case creation<br>3. Verify email notification | Complete automation chain execution | Check TheHive UI and email inbox |
+
+### 3. Performance Testing
+
+#### 3.1 Load Testing Scenarios
+```python
+import subprocess
+import time
+
+def generate_load():
+    """Generate test load for performance testing"""
+    for i in range(100):
+        # Create process events
+        subprocess.run(['notepad.exe'])
+        # Create file events
+        with open(f'test_file_{i}.txt', 'w') as f:
+            f.write('test content')
+        # Create registry events
+        subprocess.run(['reg', 'add', 'HKCU\Software\Test', '/v', f'Value_{i}', '/t', 'REG_SZ', '/d', 'test', '/f'])
+        time.sleep(0.1)
+```
+
+#### 3.2 Performance Metrics Collection
+
+```bash
+#!/bin/bash
+
+# Collect metrics
+collect_metrics() {
+    echo "=== Wazuh Manager Metrics ==="
+    top -b -n 1 | grep ossec
+    
+    echo "=== TheHive Metrics ==="
+    curl -s http://localhost:9000/api/stats
+    
+    echo "=== Elasticsearch Metrics ==="
+    curl -s localhost:9200/_cat/indices?v
+}
+
+# Run test
+echo "Starting load test..."
+python generate_load.py
+
+# Collect metrics every minute for 5 minutes
+for i in {1..5}; do
+    collect_metrics
+    sleep 60
+done
+```
+
+### 4. Security Testing
+
+#### 4.1 Detection Testing Matrix
+
+| Attack Technique | Test Method | Expected Alert | Validation |
+|-----------------|-------------|----------------|------------|
+| Credential Dumping | Execute Mimikatz | Level 12 Alert | Check Wazuh alerts |
+| PowerShell Encoding | Run encoded command | Level 10 Alert | Verify SOAR trigger |
+| Registry Modification | Modify WDigest | Level 8 Alert | Check TheHive case |
+
+#### 4.2 False Positive Testing
+```mermaid
+flowchart TD
+    A[Generate Benign Events] --> B{Alert Generated?}
+    B -->|Yes| C[Analyze Rule]
+    B -->|No| D[Test Passed]
+    C --> E[Adjust Rule]
+    E --> A
+```
+
+### 5. Recovery Testing
+
+#### 5.1 Component Failure Scenarios
+```bash
+# Test Wazuh Manager Recovery
+systemctl stop wazuh-manager
+sleep 30
+systemctl start wazuh-manager
+
+# Verify Recovery
+/var/ossec/bin/agent_control -l
+tail -f /var/ossec/logs/ossec.log
+```
+
+#### 5.2 Data Loss Prevention Testing
+```bash
+# Backup Test
+./backup_script.sh
+
+# Simulate Failure
+systemctl stop elasticsearch
+rm -rf /var/lib/elasticsearch/nodes
+
+# Restore Test
+./restore_script.sh
+
+# Validate Data
+curl -X GET "localhost:9200/_cat/indices?v"
+```
+
+### 6. Compliance Testing
+
+#### 6.1 Logging Validation
+```bash
+#!/bin/bash
+
+# Check log retention
+find /var/ossec/logs/archives -type f -mtime +90
+
+# Verify log integrity
+/var/ossec/bin/syscheck_control -i all
+
+# Check permissions
+ls -l /var/ossec/logs/alerts/alerts.log
+```
+
+#### 6.2 Access Control Testing
+```bash
+# Test API access
+curl -u user:password http://localhost:55000/
+
+# Verify authentication
+grep "Authentication failed" /var/ossec/logs/api.log
+
+# Check file permissions
+find /var/ossec/etc -type f -exec ls -l {} \;
+```
+
 ## 🔍 Troubleshooting Guide
 
 ### Common Issues and Solutions
