@@ -141,6 +141,44 @@ Set-Content -Path $configFile -Value $config
 Restart-Service -Name "Wazuh"
 ```
 
+### 1.3 Sysmon Extended Configuration
+```xml
+<Sysmon schemaversion="4.60">
+  <HashAlgorithms>md5,sha256</HashAlgorithms>
+  <EventFiltering>
+    <!-- Process Creation -->
+    <RuleGroup name="Process Creation" groupRelation="or">
+      <ProcessCreate onmatch="include">
+        <Rule name="DetectMimikatz">
+          <Image condition="contains">mimikatz</Image>
+        </Rule>
+        <Rule name="DetectSuspiciousPS">
+          <CommandLine condition="contains">-enc</CommandLine>
+          <CommandLine condition="contains">-encode</CommandLine>
+          <CommandLine condition="contains">-decoded</CommandLine>
+        </Rule>
+      </ProcessCreate>
+    </RuleGroup>
+    
+    <!-- Process Access -->
+    <RuleGroup name="Process Access" groupRelation="or">
+      <ProcessAccess onmatch="include">
+        <TargetImage condition="end with">lsass.exe</TargetImage>
+        <GrantedAccess>0x1010</GrantedAccess>
+      </ProcessAccess>
+    </RuleGroup>
+    
+    <!-- Registry Events -->
+    <RuleGroup name="Registry Events" groupRelation="or">
+      <RegistryEvent onmatch="include">
+        <TargetObject condition="contains">WDigest</TargetObject>
+        <TargetObject condition="contains">SecurityProviders</TargetObject>
+      </RegistryEvent>
+    </RuleGroup>
+  </EventFiltering>
+</Sysmon>
+```
+
 ### 2. Wazuh Server Advanced Configuration
 
 #### 2.1 Custom Detection Rules
