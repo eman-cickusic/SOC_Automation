@@ -281,6 +281,24 @@ Create `/var/ossec/etc/shared/windows/agent.conf`:
 </agent_config>
 ```
 
+```mermaid
+sequenceDiagram
+    participant W as Windows 10
+    participant WA as Wazuh Agent
+    participant WM as Wazuh Manager
+    participant S as Shuffle
+    participant TH as TheHive
+    participant E as Email
+
+    W->>WA: Generate Sysmon Event
+    WA->>WM: Forward Event
+    WM->>WM: Process Rules
+    WM->>S: Trigger Alert
+    S->>TH: Create Case
+    S->>E: Send Notification
+    TH->>TH: Assign to Analyst
+```
+
 ### 3. TheHive Advanced Setup
 
 #### 3.1 TheHive Configuration
